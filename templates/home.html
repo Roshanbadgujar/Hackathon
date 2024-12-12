@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Pages</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        body {
+            background-color: #e8f5e9;
+        }
+        .search-box {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <h3 class="text-center">Search for Newton's Laws</h3>
+            <form action="/search" method="POST">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="page_name" placeholder="Enter page name (e.g., Newton's First)" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // GSAP animation for search box
+        gsap.from(".search-box", { duration: 1.5, scale: 0.8, opacity: 0, ease: "back.out(1.7)" });
+    </script>
+</body>
+</html>

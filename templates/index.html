@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive & Animated Page</title>
+  
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+
+  <!-- Type.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/typeit@7.0.0/dist/typeit.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-color: #f7f7f7;
+      color: #333;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      background: linear-gradient(135deg, #ff6347, #ff4500);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+    }
+
+    .cta-btn {
+      padding: 12px 36px;
+      background-color: #ff6347;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 50px;
+      opacity: 0;
+    }
+
+    .cta-btn:hover {
+      background-color: #ff4500;
+    }
+
+    /* Feature Cards Section */
+    .feature-cards {
+      display: flex;
+      justify-content: space-around;
+      padding: 50px 10%;
+      background-color: #f2f2f2;
+    }
+
+    .feature-card {
+      background-color: #fff;
+      width: 300px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+      opacity: 0;
+    }
+
+    .feature-card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-card h3 {
+      color: #ff6347;
+    }
+
+    /* Scroll to Top Button */
+    #scrollToTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #ff6347;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      display: none;
+      cursor: pointer;
+    }
+
+    /* Smooth Scroll Section */
+    section {
+      padding: 60px 0;
+    }
+
+    /* Add Animation Colors */
+    .highlight {
+      color: #ff6347;
+    }
+    
+     
+    
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div>
+      <h1 id="hero-heading">Welcome to Our Interactive Website</h1>
+      <button class="cta-btn" id="cta-btn">Explore More</button>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="feature-cards">
+    <div class="feature-card">
+      <h3>Feature 1</h3>
+      <p>Details about feature 1</p>
+    </div>
+    <div class="feature-card">
+      <h3>Feature 2</h3>
+      <p>Details about feature 2</p>
+    </div>
+    <div class="feature-card">
+      <h3>Feature 3</h3>
+      <p>Details about feature 3</p>
+    </div>
+  </section>
+
+  <section id="games">
+    <h2>Create Fun & Educational Games!</h2>
+    <p>Learning doesn't have to be boring! Dive into these interactive games to boost your knowledge in various subjects.</p>
+    <div class="game-card">
+        <h3>Subject: History</h3>
+        <p id="history-game-desc">Game: Timeline Dash! Race against the clock to correctly order historical events.</p>
+    </div>
+    <div class="game-card">
+        <h3>Subject: Science</h3>
+        <p id="science-game-desc">Game: Mystery Match! Match scientific terms with their definitions to uncover a hidden image.</p>
+    </div>
+    <div class="game-card">
+        <h3>Subject: Math</h3>
+        <p id="math-game-desc">Game: Number Ninjas! Solve equations to defeat enemies and progress through challenging levels.</p>
+    </div>
+    <div class="game-card">
+        <h3>Subject: Language Arts</h3>
+        <p id="language-arts-game-desc">Game: Word Scramble! Unscramble jumbled letters to form words and build your vocabulary.</p>
+    </div>
+    <p class="highlight">These are just a few examples! Get creative and design games for any subject you're studying.</p>
+</section>
+
+  <!-- Scroll to Top Button -->
+  <button id="scrollToTopBtn">↑</button>
+
+  <!-- Smooth Scroll Section -->
+  <section id="section1">
+    <p>Scroll to see smooth animations in action.</p>
+  </section>
+
+  <script>
+    // GSAP Animations for Hero Section
+    window.onload = function() {
+      gsap.to("#hero-heading", { opacity: 1, y: -50, duration: 1.5, delay: 0.5, ease: "power3.out" });
+      gsap.to(".cta-btn", { opacity: 1, y: 20, duration: 1.5, delay: 1, ease: "power3.out" });
+    };
+
+    // GSAP Animation for Feature Cards on Scroll
+    const features = document.querySelectorAll('.feature-card');
+    gsap.utils.toArray(features).forEach((card, index) => {
+      gsap.from(card, {
+        opacity: 0,
+        y: 50,
+        delay: 0.5 * index,
+        duration: 1,
+        scrollTrigger: {
+          trigger: card,
+          start: "top 75%",
+          end: "top 30%",
+          scrub: true
+        }
+      });
+    });
+
+    // Type.js for Typing Effect on Hero Heading
+    new TypeIt("#hero-heading", {
+      strings: ["Welcome to Our Interactive Website"],
+      speed: 100,
+      breakLines: false,
+      waitUntilVisible: true,
+      afterComplete: () => {
+        gsap.to("#hero-heading", { color: "#ff6347", duration: 1 });
+      }
+    }).go();
+
+    // Scroll to Top Button Visibility
+    window.onscroll = function() {
+      const scrollBtn = document.getElementById("scrollToTopBtn");
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        scrollBtn.style.display = "block";
+      } else {
+        scrollBtn.style.display = "none";
+      }
+    };
+
+    // Scroll to Top Smooth Scroll
+    document.getElementById("scrollToTopBtn").onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Smooth Scroll to Section using Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Button Hover Animation
+    gsap.to(".cta-btn", {
+      scale: 1.1,
+      duration: 0.3,
+      repeat: -1,
+      yoyo: true,
+      ease: "power1.inOut",
+      paused: true
+    });
+
+    // GSAP ScrollTrigger (Optional Advanced Effect)
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from(".feature-card", {
+      scrollTrigger: {
+        trigger: ".feature-cards",
+        start: "top 75%",
+        end: "bottom 25%",
+        toggleActions: "play none none reverse"
+      },
+      y: 50,
+      opacity: 0,
+      stagger: 0.3,
+      duration: 1,
+      ease: "power4.out"
+    });
+
+// Example: Hover effect on game cards
+const gameCards = document.querySelectorAll('.game-card');
+
+gameCards.forEach(card => {
+  card.addEventListener('mouseover', () => {
+    card.style.transform = 'scale(1.05)';
+  });
+
+  card.addEventListener('mouseout', () => {
+    card.style.transform = 'scale(1)';
+  });
+});
+  </script>
+</body>
+</html>

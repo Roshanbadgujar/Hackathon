@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton's Second</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.0/dist/phaser.js"></script>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #commentBox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            border-radius: 5px;
+        }
+        .forceIndicator {
+            position: absolute;
+            font-size: 18px;
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .arrow {
+            stroke: #ff0000;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+    <div id="commentBox">Click and hold to push the ball. Watch Newton's  Second Laws in action!</div>
+
+    <script>
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 1000 },  // Gravity pulling the ball down
+                    debug: false
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        let player;
+        let ball;
+        let isPushing = false;
+        let forceApplied = { x: 0, y: 0 };
+        let forceIndicator;
+        let gravityArrow;
+        let appliedForceArrow;
+        let oppositeForceArrow;
+        let mass = 2;  // Default mass of the ball (in kg)
+        let acceleration = { x: 0, y: 0 };
+
+        function preload() {
+            this.load.image('ball', 'https://phaser.io/images/docs/sprite.png'); // Ball image
+        }
+
+        function create() {
+            // Create player (controlled object)
+            player = this.physics.add.image(100, 300, 'ball');
+            player.setCollideWorldBounds(true);
+            player.setScale(0.5);
+            player.setBounce(0.8); // Bouncy player
+
+            // Create ball to be pushed
+            ball = this.physics.add.image(600, 300, 'ball');
+            ball.setCollideWorldBounds(true);
+            ball.setScale(0.5);
+            ball.setBounce(1); // Fully bouncy ball
+            ball.setDrag(0.95); // Air resistance
+
+            // Force indicator
+            forceIndicator = this.add.text(10, 50, `Force Applied: 0, 0`, {
+                font: '18px Arial',
+                fill: '#ff0000'
+            });
+
+            // Arrows for visualization
+            gravityArrow = this.add.graphics();
+            appliedForceArrow = this.add.graphics();
+            oppositeForceArrow = this.add.graphics();
+
+            // Add controls for pushing
+            this.input.on('pointerdown', startPushing, this);
+            this.input.on('pointerup', stopPushing, this);
+        }
+
+        function update() {
+            // Update player movement toward mouse
+            if (this.input.activePointer.isDown) {
+                let pointerX = this.input.x;
+                let pointerY = this.input.y;
+                let angle = Phaser.Math.Angle.Between(player.x, player.y, pointerX, pointerY);
+                let speed = 300;
+
+                player.setVelocityX(Math.cos(angle) * speed);
+                player.setVelocityY(Math.sin(angle) * speed);
+
+                if (isPushing) {
+                    // Apply force to the ball in the opposite direction
+                    let ballAngle = Phaser.Math.Angle.Between(player.x, player.y, ball.x, ball.y);
+                    let forceMagnitude = 200;
+
+                    ball.setVelocityX(Math.cos(ballAngle) * -forceMagnitude);
+                    ball.setVelocityY(Math.sin(ballAngle) * -forceMagnitude);
+
+                    forceApplied.x = Math.cos(ballAngle) * -forceMagnitude;
+                    forceApplied.y = Math.sin(ballAngle) * -forceMagnitude;
+
+                    // Calculate acceleration based on Newton's Second Law (F = ma)
+                    acceleration.x = forceApplied.x / mass;
+                    acceleration.y = forceApplied.y / mass;
+                }
+            }
+
+            // Update force indicator text
+            forceIndicator.setText(`Force Applied: ${forceApplied.x.toFixed(2)}, ${forceApplied.y.toFixed(2)}\nAcceleration: ${acceleration.x.toFixed(2)}, ${acceleration.y.toFixed(2)}`);
+
+            // Visualize gravity force
+            gravityArrow.clear();
+            gravityArrow.lineStyle(2, 0x0000ff, 1);
+            gravityArrow.beginPath();
+            gravityArrow.moveTo(ball.x, ball.y);
+            gravityArrow.lineTo(ball.x, ball.y + 50);  // Gravity arrow length
+            gravityArrow.strokePath();
+
+            // Visualize applied force (from player)
+            appliedForceArrow.clear();
+            appliedForceArrow.lineStyle(2, 0xff0000, 1);
+            appliedForceArrow.beginPath();
+            appliedForceArrow.moveTo(ball.x, ball.y);
+            appliedForceArrow.lineTo(ball.x + forceApplied.x * 0.05, ball.y + forceApplied.y * 0.05);
+            appliedForceArrow.strokePath();
+
+            // Visualize opposite force (reaction from ball)
+            oppositeForceArrow.clear();
+            oppositeForceArrow.lineStyle(2, 0x00ff00, 1); // Green for opposite force
+            oppositeForceArrow.beginPath();
+            oppositeForceArrow.moveTo(player.x, player.y);
+            oppositeForceArrow.lineTo(player.x - forceApplied.x * 0.05, player.y - forceApplied.y * 0.05);
+            oppositeForceArrow.strokePath();
+        }
+
+        // Start pushing (apply force)
+        function startPushing() {
+            isPushing = true;
+            document.getElementById('commentBox').innerText = "Pushing: Watch the ball move in the opposite direction!";
+        }
+
+        // Stop pushing
+        function stopPushing() {
+            isPushing = false;
+            ball.setVelocityX(0);
+            ball.setVelocityY(0);
+            document.getElementById('commentBox').innerText = "Click and hold to push the ball. Watch Newton's Third and Second Laws in action!";
+        }
+    </script>
+</body>
+</html>
